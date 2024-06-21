@@ -35,7 +35,7 @@ func resizeRatio(image bimg.Image, ratio float64) (bimg.Image, error) {
 	return *newImg, nil
 }
 
-func processImage(image bimg.Image, options bimg.Options) (bimg.Image, error) {
+func applyImageOptions(image bimg.Image, options bimg.Options) (bimg.Image, error) {
 	newBuf, err := image.Process(options)
 	if err != nil {
 		return image, err
@@ -43,15 +43,6 @@ func processImage(image bimg.Image, options bimg.Options) (bimg.Image, error) {
 
 	return *bimg.NewImage(newBuf), nil
 }
-
-/* func getResizedImages(image bimg.Image, steps int) ([]bimg.Image, error) {
-	ratio := 1.0 / steps
-	images := []bimg.Image{image}
-
-	for i := range steps - 1 {
-
-	}
-} */
 
 func readImage(path string) (bimg.Image, error) {
 	buffer, err := bimg.Read(path)
@@ -61,5 +52,30 @@ func readImage(path string) (bimg.Image, error) {
 
 	image := bimg.NewImage(buffer)
 	return *image, nil
+}
 
+func processImage(image string, imageOptions bimg.Options, steps int) ([]bimg.Image, error) {
+	imageData, err := readImage(image)
+	if err != nil {
+		return nil, err
+	}
+
+	imageData, err = convFormat(imageData, bimg.WEBP)
+	imageData, err = applyImageOptions(imageData, imageOptions)
+
+	if err != nil {
+		return nil, err
+	}
+
+	images := []bimg.Image{}
+	for i := steps; i > 0; i-- {
+		ratio := float64(i) / float64(steps)
+		resizedImage, err := resizeRatio(imageData, ratio)
+		if err != nil {
+			return nil, err
+		}
+		images = append(images, resizedImage)
+	}
+
+	return images, nil
 }
