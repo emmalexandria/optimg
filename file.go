@@ -173,3 +173,41 @@ func isDir(path string) (bool, error) {
 	}
 	return stat.IsDir(), nil
 }
+
+func estTotal(args Args, inputPath string) (int, error) {
+	isDir, err := isDir(inputPath)
+	if err != nil {
+		return -1, err
+	}
+
+	count := 0
+	if isDir {
+		if args.Recursive {
+			subDirs, err := getSubDirs(inputPath, args.OutputDir)
+			if err != nil {
+				return -1, err
+			}
+
+			for _, dir := range subDirs {
+				files, err := getFilesInDir(dir, args.InputExtensions)
+				if err != nil {
+					return -1, nil
+				}
+
+				count += len(files)
+			}
+		} else {
+			files, err := getFilesInDir(inputPath, args.InputExtensions)
+			if err != nil {
+				return -1, nil
+			}
+
+			count += len(files)
+
+		}
+	} else {
+		count += 1
+	}
+
+	return count, nil
+}

@@ -19,3 +19,7 @@ func warningPrintln(output string, params ...interface{}) {
 func infoPrintln(output string, params ...interface{}) {
 	color.New(color.FgWhite).Printf(output+"\n", params...)
 }
+
+func alreadyProcessedMessage(file string) {
+	warningPrintln("Already processed %s, skipping...", file)
+}
