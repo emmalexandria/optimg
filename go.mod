@@ -1,4 +1,4 @@
-module emmalexandria.dev/optimg
+module github.com/emmalexandria/optimg
 
 go 1.22.4
 
