@@ -11,6 +11,12 @@ import (
 	"slices"
 )
 
+type imagePath struct {
+	image        bimg.Image
+	path         string
+	originalPath string
+}
+
 func getSubDirs(dir string, outputDir string) ([]string, error) {
 	entries := []string{}
 	err := filepath.WalkDir(dir, func(path string, info fs.DirEntry, err error) (e error) {
@@ -47,23 +53,26 @@ func checkForFileExtensions(path string, extensions []string) bool {
 	return slices.Contains(extensions, pathExt)
 }
 
-func saveImagesInOutput(images []bimg.Image, originalPath string, ext string, outputDir string) error {
+func saveImagesInOutput(images []bimg.Image, originalPath string, ext string, outputDir string) ([]imagePath, error) {
 	baseDir := path.Join(path.Dir(originalPath), outputDir)
 	baseName := path.Base(originalPath)
 
+	imagePaths := []imagePath{}
 	for _, img := range images {
 		name, err := getNonConflictingName(img, baseName, baseDir, ext)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		err = bimg.Write(path.Join(baseDir, name), img.Image())
 		if err != nil {
-			return err
+			return nil, err
 		}
+
+		imagePaths = append(imagePaths, imagePath{originalPath: originalPath, image: img, path: path.Join(baseDir, name)})
 	}
 
-	return nil
+	return imagePaths, nil
 }
 
 func getNonConflictingName(image bimg.Image, baseName string, baseDir string, ext string) (string, error) {

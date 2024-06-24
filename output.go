@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/fatih/color"
 )
 
@@ -22,4 +23,17 @@ func infoPrintln(output string, params ...interface{}) {
 
 func alreadyProcessedMessage(file string) {
 	warningPrintln("Already processed %s, skipping...", file)
+}
+
+func generateSrcSet(images []imagePath) (string, error) {
+	boldColor := color.New(color.FgHiWhite, color.Bold)
+	srcSetStr := boldColor.Sprintf("%s:", images[0].originalPath)
+	for _, image := range images {
+		size, err := image.image.Size()
+		if err != nil {
+			return "", err
+		}
+		srcSetStr += fmt.Sprintf("%s %v%s ", image.path, size.Width, "w")
+	}
+	return srcSetStr, nil
 }
