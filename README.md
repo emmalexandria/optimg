@@ -35,6 +35,12 @@ Create 16 resized `.png` files of quality 100 in the directory `output`:
 
 `optimg static -t .webp -q 100 -o output`
 
+## Installation
+The recommended installation method is to run:
+
+`go install github.com/emmalexandria/optimg@latest`
+
+This requires that Go is installed.
 
 ## Long-term goals
 
