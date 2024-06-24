@@ -25,7 +25,7 @@ type Args struct {
 }
 
 func (Args) Version() string {
-	return "optimg 1.0.0"
+	return "optimg 0.2"
 }
 
 var Progress struct {
